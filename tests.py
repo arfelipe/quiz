@@ -100,3 +100,19 @@ def test_correct_selected_choices_with_no_correct_selections():
     choice2 = question.add_choice('b')
     correct_selections = question.correct_selected_choices([choice1.id, choice2.id])
     assert len(correct_selections) == 0
+
+@pytest.fixture
+def question_with_choices():
+    question = Question(title='New fixture question', max_selections=2)
+    question.add_choice('Correct answer', is_correct=True)
+    question.add_choice('Incorrect answer')
+    return question
+
+def test_question_has_choices(question_with_choices):
+    assert len(question_with_choices.choices) == 2
+
+def test_check_correct_choice(question_with_choices):
+    correct_choices_ids = [choice.id for choice in question_with_choices.choices if choice.is_correct]
+    selected_ids = question_with_choices.correct_selected_choices([correct_choices_ids[0]])
+    assert len(selected_ids) == 1
+    assert selected_ids[0] == correct_choices_ids[0]
